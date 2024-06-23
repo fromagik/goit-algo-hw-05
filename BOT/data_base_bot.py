@@ -2,7 +2,7 @@ import sqlite3
 
 #Create connection
 def get_connection(): # Конектимо базу данних 
-    return sqlite3.connect('home_work_04.db')
+    return sqlite3.connect('bot_data_base.db')
 
 
 #Cтворюємо таблицю 
@@ -55,3 +55,11 @@ def table_exist(table_name): # Перевірка на існування таб
     exists = cursor.fetchone() is not None 
     connect.close()
     return exists
+
+def is_table_empty(): # Добавив перевірку на заповнення таблиці 
+    connect = sqlite3.connect()
+    cursor = connect.cursor()
+    cursor.execute(f"SELECT COUNT(*) FROM contacts;")
+    count = cursor.fetchone()[0]
+    connect.close()
+    return count == 0 # Повертає True якщо таблиця пуста і False якщо заповнена
