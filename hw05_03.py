@@ -1,23 +1,49 @@
 import os
 from pathlib import Path
+import sys
+
+def main():
+    path = None
+    level = None
+    if len(sys.argv) > 1:
+        try:
+            path = sys.argv[1]
+            level = sys.argv[2]
+        except IndexError:
+            path = sys.argv[1]
+    
+    if level:
+        display_log_counts(count_logs_by_level(load_logs(path)))
+        print(filter_logs_by_level(load_logs(path) ,level)[0])
+        for logs in filter_logs_by_level(load_logs(path) ,level)[1]:
+            print(logs)
+    else:
+        display_log_counts(count_logs_by_level(load_logs(path)))
+
+
+
+
+
+
+
+
 
 def parse_log_line(line: str) -> dict:
     new_line = line.split()
-    date, time, log, disc = new_line[:1], new_line[1:2], new_line[2:3], new_line[3:]
+    date, time, log, desc = new_line[:1], new_line[1:2], new_line[2:3], new_line[3:]
     new_dict = {
         'Date' : " ".join(date),
         'Time' : " ".join(time),
         'Log' : ' '.join(log),
-        'disc' : " ".join(disc)
+        'Description' : " ".join(desc)
     }
 
     return new_dict
 
 
 def load_logs(file_path: str) -> list:
-    # if os.path.exists(file_path):
-    if file_path.is_file():
-        with file_path.open('r') as file:
+    if os.path.exists(file_path):
+        with open(file_path, 'r') as file:
             lines = file.readlines()
             return [line.strip() for line in lines]
 
@@ -43,17 +69,14 @@ def count_logs_by_level(logs: list) -> dict:
 
 
 def display_log_counts(counts: dict):
-    pass
+    level_logs = 'Рівень логування'
+    quantity_logs = 'Кількість'
+    first_line = f"{level_logs:^10}|{quantity_logs:^10}"
+    print(first_line)
+    print('-'*len(level_logs) + '|' + '-' * len(quantity_logs))
+    for key, value in counts.items():
+        print(f'{key:^16}|{value:^10}')
 
 
 if __name__ == '__main__':
-    # if len(sys.argv) > 1:
-    #     try:
-    #         path = sys.argv[1]
-    #         level = sys.argv[2]
-    #     except IndexError:
-    #         path = sys.argv[1]
-    path = Path('logs.txt')        
-    #print(load_logs(path))
-    # for parse in load_logs(path):
-    #     print(parse_log_line(parse.strip()))
+    main()
